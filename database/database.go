@@ -46,7 +46,6 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"cloud.google.com/go/trace"
 	"github.com/garyburd/redigo/redis"
 	"github.com/golang/snappy"
 	"golang.org/x/oauth2/google"
@@ -129,7 +128,6 @@ func newRemoteClient(host string) (*remote_api.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	client.Transport = trace.Transport{Base: client.Transport}
 
 	return remote_api.NewClient(host, client)
 }

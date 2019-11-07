@@ -11,16 +11,10 @@ import (
 	"log"
 	"time"
 
-	"cloud.google.com/go/trace"
-
 	"github.com/golang/gddo/gosrc"
 )
 
 func (s *server) doCrawl(ctx context.Context) error {
-	span := s.traceClient.NewSpan("Crawl")
-	defer span.Finish()
-	ctx = trace.NewContext(ctx, span)
-
 	// Look for new package to crawl.
 	importPath, hasSubdirs, err := s.db.PopNewCrawl()
 	if err != nil {
@@ -55,10 +49,6 @@ func (s *server) doCrawl(ctx context.Context) error {
 }
 
 func (s *server) readGitHubUpdates(ctx context.Context) error {
-	span := s.traceClient.NewSpan("GitHubUpdates")
-	defer span.Finish()
-	ctx = trace.NewContext(ctx, span)
-
 	const key = "gitHubUpdates"
 	var last string
 	if err := s.db.GetGob(key, &last); err != nil {

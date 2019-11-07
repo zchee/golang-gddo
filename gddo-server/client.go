@@ -13,7 +13,6 @@ import (
 	"net"
 	"net/http"
 
-	"cloud.google.com/go/trace"
 	"github.com/gregjones/httpcache"
 	"github.com/gregjones/httpcache/memcache"
 	"github.com/spf13/viper"
@@ -45,7 +44,6 @@ func newHTTPClient(v *viper.Viper) *http.Client {
 		GithubClientID:     v.GetString(ConfigGithubClientID),
 		GithubClientSecret: v.GetString(ConfigGithubClientSecret),
 	}
-	t = trace.Transport{Base: t}
 	return &http.Client{
 		Transport: t,
 		Timeout:   requestTimeout,

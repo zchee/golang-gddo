@@ -30,7 +30,6 @@ import (
 
 	"cloud.google.com/go/logging"
 	"cloud.google.com/go/pubsub"
-	"cloud.google.com/go/trace"
 	"github.com/spf13/viper"
 
 	"github.com/golang/gddo/database"
@@ -833,13 +832,12 @@ func defaultBase(path string) string {
 }
 
 type server struct {
-	v           *viper.Viper
-	db          *database.Database
-	httpClient  *http.Client
-	gceLogger   *GCELogger
-	templates   templateMap
-	traceClient *trace.Client
-	crawlTopic  *pubsub.Topic
+	v          *viper.Viper
+	db         *database.Database
+	httpClient *http.Client
+	gceLogger  *GCELogger
+	templates  templateMap
+	crawlTopic *pubsub.Topic
 
 	statusPNG http.Handler
 	statusSVG http.Handler
@@ -855,15 +853,6 @@ func newServer(ctx context.Context, v *viper.Viper) (*server, error) {
 
 	var err error
 	if proj := s.v.GetString(ConfigProject); proj != "" {
-		if s.traceClient, err = trace.NewClient(ctx, proj); err != nil {
-			return nil, err
-		}
-		sp, err := trace.NewLimitedSampler(s.v.GetFloat64(ConfigTraceSamplerFraction), s.v.GetFloat64(ConfigTraceSamplerMaxQPS))
-		if err != nil {
-			return nil, err
-		}
-		s.traceClient.SetSamplingPolicy(sp)
-
 		// This topic should be created in the cloud console.
 		ps, err := pubsub.NewClient(ctx, proj)
 		if err != nil {
@@ -948,10 +937,10 @@ func newServer(ctx context.Context, v *viper.Viper) (*server, error) {
 
 	mainMux := http.NewServeMux()
 	mainMux.Handle("/_ah/", ahMux)
-	mainMux.Handle("/", s.traceClient.HTTPHandler(mux))
+	mainMux.Handle("/", mux)
 
 	s.root = rootHandler{
-		{"api.", httpsRedirectHandler{s.traceClient.HTTPHandler(apiMux)}},
+		{"api.", httpsRedirectHandler{apiMux}},
 		{"talks.godoc.org", otherDomainHandler{"https", "go-talks.appspot.com"}},
 		{"", httpsRedirectHandler{mainMux}},
 	}
