@@ -46,7 +46,7 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"github.com/garyburd/redigo/redis"
+	"github.com/gomodule/redigo/redis"
 	"github.com/golang/snappy"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/appengine"

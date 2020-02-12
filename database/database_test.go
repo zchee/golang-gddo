@@ -13,7 +13,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/garyburd/redigo/redis"
+	"github.com/gomodule/redigo/redis"
 	"github.com/google/go-cmp/cmp"
 
 	"github.com/golang/gddo/doc"
