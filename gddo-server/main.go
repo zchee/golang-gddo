@@ -22,6 +22,7 @@ import (
 	"os"
 	"path"
 	"regexp"
+	"runtime"
 	"runtime/debug"
 	"sort"
 	"strconv"
@@ -1007,6 +1008,12 @@ func (s *server) logRequestEnd(req *http.Request, latency time.Duration) {
 }
 
 func main() {
+	log.Printf("runtime.Version: %s\n", runtime.Version())
+	log.Printf("runtime.GOOS:    %s\n", runtime.GOOS)
+	log.Printf("runtime.GOARCH:  %s\n", runtime.GOARCH)
+	log.Printf("runtime.GOROOT:  %s\n", runtime.GOROOT())
+	log.Printf("build.GOPATH:    %s\n", build.Default.GOPATH)
+
 	ctx := context.Background()
 	v, err := loadConfig(ctx, os.Args)
 	if err != nil {
